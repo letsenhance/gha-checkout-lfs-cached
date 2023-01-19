@@ -93,7 +93,7 @@ runs:
         path: |
           .git/lfs
           ${{ steps.cache-paths.outputs.CACHE_PATHS }}
-        key: lfs-${{ hashFiles('.lfs-assets-id') }}-v2
+        key: lfs-fixed-v2
 
     - name: Git LFS Pull
       run: |
