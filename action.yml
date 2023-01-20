@@ -39,12 +39,6 @@ inputs:
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     required: false
     default: ${{ github.token }}
-  submodules:
-    description: >
-      Whether to checkout submodules: `true` to checkout submodules or `recursive` to
-      recursively checkout submodules.
-    required: false
-    default: false
   persist-credentials:
     description: >
       'Whether to configure the token or SSH key with the local git config
@@ -61,30 +55,7 @@ runs:
         ref: ${{ inputs.ref }}
         repository: ${{ inputs.repository }}
         token: ${{ inputs.token }}
-        submodules: ${{ inputs.submodules }}
         persist-credentials: ${{ inputs.persist-credentials }}
-
-    - name: Create LFS file list
-      run: |
-        git lfs ls-files --long --include  "${{ inputs.include }}" --exclude  "${{ inputs.exclude }}" | cut -d ' ' -f1 > .lfs-assets-id-unsorted
-        git submodule foreach git lfs ls-files --long --include  "${{ inputs.include }}" --exclude  "${{ inputs.exclude }}" | cut -d ' ' -f1 >> .lfs-assets-id-unsorted
-        cat .lfs-assets-id-unsorted | sort > .lfs-assets-id
-      shell: bash
-
-    - name: Create Submodule LFS Cache Paths
-      run: |
-        CACHE_PATHS=""
-
-        # loop over the git submodule paths to generate a list of module directories to cache
-        # `git config` is used to extract the `path` value for each git submodule
-        # for more information about the .gitmodules file, see: https://git-scm.com/docs/gitmodules
-        while read line; do
-          CACHE_PATHS+=".git/modules/$line/lfs "
-        done < <(git config --file .gitmodules --get-regexp path | awk '{ print $2 }')
-
-        echo "CACHE_PATHS=$CACHE_PATHS" >> $GITHUB_OUTPUT
-      id: cache-paths
-      shell: bash
 
     - name: Restore LFS cache
       uses: actions/cache@v3
@@ -92,15 +63,11 @@ runs:
       with:
         path: |
           .git/lfs
-          ${{ steps.cache-paths.outputs.CACHE_PATHS }}
         key: lfs-fixed-v2
 
     - name: Git LFS Pull
-      env:
-        GIT_TRACE: 1
       run: |
         git lfs pull --include  "${{ inputs.include }}" --exclude  "${{ inputs.exclude }}"
-        git submodule foreach git lfs pull --include  "${{ inputs.include }}" --exclude  "${{ inputs.exclude }}"
       shell: bash
 
     # Don't leave behind temp files in case build system checks for dirty workspace
