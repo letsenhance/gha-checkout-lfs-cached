@@ -96,6 +96,8 @@ runs:
         key: lfs-fixed-v2
 
     - name: Git LFS Pull
+      env:
+        GIT_TRACE: 1
       run: |
         git lfs pull --include  "${{ inputs.include }}" --exclude  "${{ inputs.exclude }}"
         git submodule foreach git lfs pull --include  "${{ inputs.include }}" --exclude  "${{ inputs.exclude }}"
