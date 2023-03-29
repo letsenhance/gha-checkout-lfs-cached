@@ -58,20 +58,8 @@ runs:
         persist-credentials: ${{ inputs.persist-credentials }}
 
     - name: Restore LFS cache
-      uses: actions/cache@v3
-      id: lfs-cache
-      with:
-        path: |
-          .git/lfs
-        key: lfs-fixed-v2
-
-    - name: Git LFS Pull
-      run: git lfs pull --include "${{ inputs.include }}" --exclude "${{ inputs.exclude }}"
-      shell: bash
-
-    # Don't leave behind temp files in case build system checks for dirty workspace
-    - name: Cleanup Temp Files
       run: |
-        rm -f .lfs-assets-id-unsorted
-        rm -f .lfs-assets-id
+        rm -rf .git/lfs
+        ln -s /mnt/lfs/lfs .git/lfs
+        git lfs pull --include "${{ inputs.include }}" --exclude "${{ inputs.exclude }}"
       shell: bash
