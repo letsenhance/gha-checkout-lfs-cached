@@ -61,6 +61,8 @@ runs:
       run: |
         ls -la
         rm -rf .git/lfs
+        ls -la
         ln -s /mnt/lfs/lfs .git/lfs
+        ls -la
         git lfs pull --include "${{ inputs.include }}" --exclude "${{ inputs.exclude }}"
       shell: bash
