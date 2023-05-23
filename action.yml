@@ -60,12 +60,7 @@ runs:
     - name: Restore LFS cache
       run: |
         git config --global --add safe.directory $PWD
-        ls -la
         rm -rf .git/lfs
-        git status
-        ls -la
         ln -s /mnt/lfs/lfs .git/lfs
-        git status
-        ls -la
         git lfs pull --include "${{ inputs.include }}" --exclude "${{ inputs.exclude }}"
       shell: bash
