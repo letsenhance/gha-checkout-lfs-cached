@@ -59,6 +59,7 @@ runs:
 
     - name: Restore LFS cache
       run: |
+        git config --global --add safe.directory $PWD
         ls -la
         rm -rf .git/lfs
         git status
