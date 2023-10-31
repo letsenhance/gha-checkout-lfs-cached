@@ -61,8 +61,8 @@ runs:
       run: |
         git config --global --add safe.directory $PWD
         rm -rf .git/lfs
-        # ln -s /mnt/lfs/lfs .git/lfs
-        cp -r /mnt/lfs/lfs .git/lfs
+        ln -s /mnt/lfs/lfs .git/lfs
+        # cp -r /mnt/lfs/lfs .git/lfs
         git lfs pull --include "${{ inputs.include }}" --exclude "${{ inputs.exclude }}"
       env:
         GIT_TRACE: 1
